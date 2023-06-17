@@ -7,3 +7,5 @@ LaTeX source do this:
 pdflatex main
 pdflatex main
 ```
+
+The result is in `main.pdf`.
