@@ -1,0 +1,86 @@
+%%
+%% This is file `answers_out.sty',
+%%
+
+%% This is a modified version of the moreverb.sty package for writing
+%% answers in the back of a book.
+
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{answers_out}
+\@ifundefined{verbatim@processline}
+        {\RequirePackage{verbatim}}{}
+
+
+% This assumes we have a file answers.tex
+\newcommand{\answers}{\include{answers}} 
+
+
+\newwrite \ans@out
+
+% For the guide files, we need 
+
+\def\AnswerFileName{answer_magic.tex}
+
+\def\OpenMagicAnswerFile{%
+        \immediate\openout \ans@out \AnswerFileName
+}
+\def\CloseMagicAnswerFile{%
+        \immediate\closeout\ans@out
+        \@esphack
+}
+
+
+\newcommand\AnswerLine[1]{\immediate\write\ans@out{#1}}
+
+
+\def\answerverb{%
+  \@bsphack
+  \let\do\@makeother\dospecials
+  \catcode`\^^M\active \catcode`\^^I=12
+  \def\verbatim@processline{%
+    \immediate\write\ans@out
+      {\the\verbatim@line}}%
+  \verbatim@start}
+\def\endanswerverb{\relax}
+
+
+\newenvironment{answer}%
+{\AnswerLine{\noexpand\item[\thechapter.\theenumi]}
+\answerverb}
+{\endanswerverb}
+
+
+
+
+
+\newcommand{\BeginItemize}{\begin{itemize}}
+%\renewcommand{\BeginItemize}{\begin{itemize}\small}
+
+\newcommand{\EndItemize}{\end{itemize}}
+
+
+%%%% Modified for numbering
+
+\newenvironment{exercises}%
+{
+\section*{Exercises}
+\addcontentsline{toc}{section}{Exercises}
+\AnswerLine{\noexpand\bigbreak}
+\AnswerLine{\noexpand\noindent
+  \noexpand\textbf{\noexpand\Large Chapter \arabic{chapter}}}
+%\AnswerLine{\noexpand\Section{Chapter \arabic{chapter}}}
+%\AnswerLine{\noexpand\addcontentsline{toc}{section}{Chapter \arabic{chapter}}}
+\def\theenumi{\arabic{enumi}}%
+\renewcommand\labelenumi{\thechapter.\theenumi}%
+\AnswerLine{\noexpand\BeginItemize}
+%\markright{\arabic{chapter}. Exercises}
+\begin{enumerate}
+}
+{%
+\AnswerLine{\noexpand\EndItemize}
+\end{enumerate}
+}
+
+
+
+\endinput
